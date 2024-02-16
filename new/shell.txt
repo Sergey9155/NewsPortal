@@ -1,0 +1,66 @@
+from models import User, Author, Comment, Category, Post, PostCategory
+
+
+us_1 = User.objects.create_user(username='user_1')
+us_2 = User.objects.create_user(username='user_2')
+
+au_1 = Author.objects.create(user=us_1)
+au_2 = Author.objects.create(user=us_2)
+
+ct_1 = Category.objects.create(name_category='category_1')
+ct_2 = Category.objects.create(name_category='category_2')
+ct_3 = Category.objects.create(name_category='category_3')
+ct_4 = Category.objects.create(name_category='category_4')
+
+post_1 = Post.objects.create(author=au_1, choice_news='AR',
+                             title_news='bla bla', text_news='bla bla bla bla bla bla')
+
+post_1.category.add(ct_1)
+post_1.category.add(ct_2)
+
+post_2 = Post.objects.create(author=au_1, choice_news='AR', title_news='la la', text_news='la la la la la la')
+post_2.category.add(ct_3)
+
+post_3 = Post.objects.create(author=au_2, choice_news='NE', title_news='na na', text_news='na na na na na na')
+post_3.category.add(ct_4)
+
+co_1 = Comment.objects.create(post=post_1, user=us_2, text_comment='Это шедевр')
+co_2 = Comment.objects.create(post=post_1, user=us_2, text_comment='Восхитительно')
+co_3 = Comment.objects.create(post=post_2, user=us_2, text_comment='Пойдёт')
+co_4 = Comment.objects.create(post=post_3, user=us_1, text_comment='Шлак.')
+
+>>> co_1.like()
+>>> co_1.like()
+>>> co_1.like()
+>>> co_2.like()
+>>> co_1.like()
+>>> co_1.like()
+>>> co_2.like()
+>>> co_3.dislike()
+>>> co_4.dislike()
+>>> co_4.dislike()
+>>> post_1.like()
+>>> post_1.like()
+>>> post_1.like()
+>>> post_1.like()
+>>> post_1.like()
+>>> post_2.like()
+>>> post_3.dislike()
+>>> post_3.dislike()
+>>> post_3.dislike()
+
+au_1.update_rating()
+au_2.update_rating()
+
+win = Author.objects.all().order_by('-rating_user')[0].values('user', 'rating_user')
+
+win_post =Post.objects.all().order_by('-rating_news')[0]
+win_post.all().values('author', 'time_in', 'title_news', 'rating_news')
+win_post.preview()
+
+comments = Comment.objects.filter(post=win_post)
+comments.values('user', 'time_in', 'text_comment', 'rating_comment')
+
+
+
+
